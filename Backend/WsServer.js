@@ -17,11 +17,8 @@ wss.on('connection', function connection(ws) {
     const obj = JSON.parse(message);
     const type = obj.type;
 
-    if (type == "create") {
-      create(message);
-    }
-    else if (type == "join") {
-      join(message);
+  if (type == "join") {
+      join(ws, obj.sessionID);
     }
     else if (type == "lose") {
       lose(message);
@@ -31,3 +28,23 @@ wss.on('connection', function connection(ws) {
 });
 server.listen(8080);
 console.log("Listening on 8080");
+
+
+
+const express = require('express');
+const app = express();
+
+var httpServer = app.listen(5050, function() {
+
+});
+
+app.post("/game/create", (request, response) => {
+
+  const obj = JSON.parse(request.body);
+  var sesID = create();
+  response.end(JSON.stringify({
+    sessionID : sesID
+  }))
+  
+});
+
