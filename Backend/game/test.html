@@ -32,7 +32,7 @@
 
                 http.onreadystatechange = function() {
                     if (http.readyState == 4) {
-                        join(JSON.parse(http.data).sessionID);
+                        join(JSON.parse(http.responseText).sessionID);
                     }
                 };
 
