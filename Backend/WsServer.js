@@ -75,6 +75,7 @@ var httpServer = app.listen(5050, function() {
 
 app.post("/game/create", (request, response) => {
 
+  console.log(request.body);
   const obj = JSON.parse(request.body);
   var sesID = Sessions.AddSession();
   response.end(JSON.stringify({

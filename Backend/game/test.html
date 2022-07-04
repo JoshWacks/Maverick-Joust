@@ -32,11 +32,12 @@
 
                 http.onreadystatechange = function() {
                     if (http.readyState == 4) {
+                        console.log(http);
                         join(JSON.parse(http.responseText).sessionID);
                     }
                 };
 
-                http.open("POST", "https://localhost:5050/game/create", true);
+                http.open("POST", "http://localhost:5050/game/create", true);
                 http.send(JSON.stringify(obj));
             }
             
