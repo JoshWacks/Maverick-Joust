@@ -16,17 +16,16 @@ class User {
 }
 
 class Session {
-  constructor(sessionId, socketsCount){
+  constructor(sessionId, userCount){
       this.sessionId = sessionId
-      this.socketsCount = socketsCount
-      this.sockets = []
+      this.userCount = userCount
+      this.users = []
   }
 
   AddUser(socket){
     if(this.userCount >= this.users.length){
-        user = new User
-
-        this.users.push(socket)
+        let user = new User(socket);
+        this.users.push(user)
     }
     else{
         // nReturn lobby full
@@ -35,12 +34,32 @@ class Session {
 
 KillUser(socket){
     var curUser = this.users.find((user) => user.socket == socket)
+    curUser.kill();
 }
 }
 
 class SessionList {
   constructor(){
       this.sessions = []
+  }
+
+  print(sessionID) {
+    var curSession = this.sessions.find((session) => session.sessionId == sessionID)
+    for (let i=0; i< curSession.users.length; i++) {
+      console.log(curSession.users[i].alive);
+    }
+  }
+
+  KillUser(ws, sessionID) {
+    var curSession = this.sessions.find((session) => session.sessionId == sessionID)
+      if(!curSession){
+        // Implement Error Response
+        console.log("Session does not exist");
+        return
+      }
+      else{
+        curSession.KillUser(ws);
+      }
   }
 
   AddSocketToSession(ws, sessionId){
@@ -58,7 +77,7 @@ class SessionList {
   AddSession(playerCount = 100){
     let sessionid = 'AAA'
     //Check SessionID is unique
-    while(this.sessions.find((session) => session.sessionId == sessionId)){
+    while(this.sessions.find((session) => session.sessionId == sessionid)){
       sessionid = (Math.random() + 1).toString(36).substring(9)
     }
 
@@ -67,6 +86,13 @@ class SessionList {
     return sessionid
   }
 }
+
+
+
+
+/*
+* Servers
+*/
 
 const server = http.createServer();
 const wss = new WebSocket.Server({ server });
@@ -77,7 +103,7 @@ var Sessions = new SessionList();
 wss.on('connection', function connection(ws) {
 
   ws.on('message', function incoming(message) {
-    //console.log('received: %s', message);
+  console.log('received: %s', message);
 
     const obj = JSON.parse(message);
     const type = obj.type;
@@ -86,7 +112,8 @@ wss.on('connection', function connection(ws) {
       Sessions.AddSocketToSession(ws, obj.sessionID);
     }
     else if (type == "lose") {
-      lose(message);
+      Sessions.KillUser(ws, obj.sessionID);
+      Sessions.print(obj.sessionID);
     }
   });
 

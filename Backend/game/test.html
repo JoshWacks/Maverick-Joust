@@ -8,12 +8,24 @@
             <input type="text" id="ses">
             <button onclick="clickJoin()"> Join </button> <br><br>
             <button onclick="clickCreate()"> Create </button>
+            <button onclick="clickKill()"> Kill Me </button>
         </div>
 
         <script>
 
+            var SessionID;
+            var socket;
+
+            function clickKill() {
+                socket.send(JSON.stringify({
+                    "type": "lose",
+                    "sessionID" : SessionID
+                }))
+            }
+
             function clickJoin() {
                 var sessionID = document.getElementById("ses").value;
+                SessionID = sessionID;
                 join(sessionID);
             }
 
@@ -33,6 +45,7 @@
                 http.onreadystatechange = function() {
                     if (http.readyState == 4) {
                         console.log(http);
+                        SessionID = JSON.parse(http.responseText).sessionID;
                         join(JSON.parse(http.responseText).sessionID);
                     }
                 };
@@ -42,7 +55,7 @@
             }
             
             function join(sessionID) {
-                var socket = new WebSocket("ws://localhost:8080");
+                socket = new WebSocket("ws://localhost:8080");
 
                 socket.onopen = function() {
                     
@@ -53,6 +66,8 @@
 
                     socket.send(JSON.stringify(obj));
                 }
+
+
 
                 socket.onmessage = function(message) {
                     const obj = JSON.parse(message.data);
