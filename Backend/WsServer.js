@@ -1,9 +1,6 @@
-const { create } = require('domain');
-const fs = require('fs');
-const http = require('http');
-const { join } = require('path');
-const WebSocket = require('ws');
-
+/*
+* User Class that stores the socket and the status of the user in the current game.
+*/
 class User {
   constructor(socket){
       this.socket = socket
@@ -15,6 +12,10 @@ class User {
   }
 }
 
+/*
+* Session Class to encapsulate the Users playing and associate them with a session for the
+* current game they are playing.
+*/
 class Session {
   constructor(sessionId, userCount){
       this.sessionId = sessionId
@@ -38,6 +39,10 @@ KillUser(socket){
 }
 }
 
+/*
+* In memory storage of all currently active Sessions. Also acts as a controller to 
+* the Sessions.
+*/
 class SessionList {
   constructor(){
       this.sessions = []
@@ -90,9 +95,17 @@ class SessionList {
 
 
 
-/*
+/* ==========================================================
 * Servers
-*/
+============================================================= */
+
+/* WebSocket Server */
+
+const { create } = require('domain');
+const fs = require('fs');
+const http = require('http');
+const { join } = require('path');
+const WebSocket = require('ws');
 
 const server = http.createServer();
 const wss = new WebSocket.Server({ server });
@@ -108,13 +121,14 @@ wss.on('connection', function connection(ws) {
     const obj = JSON.parse(message);
     const type = obj.type;
 
-  if (type == "join") {
+    if (type == "join") {
       Sessions.AddSocketToSession(ws, obj.sessionID);
     }
     else if (type == "lose") {
       Sessions.KillUser(ws, obj.sessionID);
       Sessions.print(obj.sessionID);
     }
+    
   });
 
 });
@@ -122,24 +136,25 @@ server.listen(8080);
 console.log("Listening on 8080");
 
 
+/* Express Server */
 
 const express = require('express');
 const app = express();
+
+const expressPort = 5050;
+
 var bodyParser = require('body-parser');
-
 var jsonParser = bodyParser.json();
-
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 
-var httpServer = app.listen(5050, function() {
-
+var httpServer = app.listen(expressPort, function() {
+  console.log("Express Server Listening on Port " + expressPort);
 });
 
 app.post("/game/create", urlencodedParser,  (request, response) => {
 
   const count = request.body.playerCount;
-  //console.log(request.body);
-  //const obj = JSON.parse(request.body);
+
   var sesID = Sessions.AddSession(count);
   response.end(JSON.stringify({
     sessionID : sesID
