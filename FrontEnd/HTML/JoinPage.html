@@ -3,29 +3,21 @@
 <head>
   <meta charset="utf-8">
   <title>Maverick-Joust</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="style.css" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+  <script src=""></script>
 </head>
 <body>
-    <figure class="text-center">
-        <h1>Join Page</h1>
-    </figure>
+    <h1>Join Page</h1>
+
+    <label for="sessionID">Session ID</label>
+    <input type="text" id="sessionID" name="sessionID">
+
+    <form action="/FrontEnd/HTML/PlayerWait.html">
+        <input type="submit" value="Join" />
+    </form>
+    <form action="/FrontEnd/HTML/index.html">
+        <input type="submit" value="Back" />
+    </form>
     
-    <div class="d-flex justify-content-center">
-        <div class="col-6">
-            <div class="row justify-content-center">
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control" placeholder="Session ID" id="sessionID" name="sessionID">
-                    <a class="btn btn-primary" href="/FrontEnd/HTML/PlayerWait.html" role="button">Join</a>
-                </div>
-            </div>
-            <div class="row justify-content-center">
-                <a class="btn btn-primary" href="/FrontEnd/HTML/index.html" role="button">Back</a>
-            </div> 
-        </div> 
-    </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
 </body>
 </html>
