@@ -26,13 +26,13 @@ class SessionList {
   AddSocketToSession(ws, sessionId){
       var curSession = this.sessions.find((session) => session.sessionId == sessionId)
       curSession.AddUser(ws)
-      console.log(sessions)
+      console.log(this.sessions)
   }
 
   AddSession(playerCount = 100){
       let sessionid = '1'
       //Implement ID System
-      session = new Session(sessionid, playerCount)
+      let session = new Session(sessionid, playerCount)
       this.sessions.push(session)
       return sessionid
   }
@@ -47,7 +47,7 @@ var Sessions = new SessionList();
 wss.on('connection', function connection(ws) {
 
   ws.on('message', function incoming(message) {
-    console.log('received: %s', message);
+    //console.log('received: %s', message);
 
     const obj = JSON.parse(message);
     const type = obj.type;
@@ -68,15 +68,21 @@ console.log("Listening on 8080");
 
 const express = require('express');
 const app = express();
+var bodyParser = require('body-parser');
+
+var jsonParser = bodyParser.json();
+
+var urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 var httpServer = app.listen(5050, function() {
 
 });
 
-app.post("/game/create", (request, response) => {
+app.post("/game/create", urlencodedParser,  (request, response) => {
 
-  console.log(request.body);
-  const obj = JSON.parse(request.body);
+  const count = request.body.playerCount;
+  //console.log(request.body);
+  //const obj = JSON.parse(request.body);
   var sesID = Sessions.AddSession();
   response.end(JSON.stringify({
     sessionID : sesID
