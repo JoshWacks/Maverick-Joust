@@ -3,17 +3,60 @@
 
     </head>
     <body>
+
+        <div>
+            <input type="text">
+            <button> Join </button> <br><br>
+            <button> Create </button>
+        </div>
+
         <script>
-            var socket = new WebSocket("ws://localhost:8080");
 
-            socket.onopen = function() {
-                socket.send("1234");
+            function clickJoin() {
+                
             }
 
-            socket.onmessage = function(message) {
-                console.log(message.data);
+            function create(playerCount) {
+
+                var obj = {
+                    "playerCount": playerCount
+                }
+
+                var http = new XMLHttpRequest();
+
+                http.onreadystatechange = function() {
+                    if (http.readyState == 4) {
+                        join(JSON.parse(http.data).sessionID);
+                    }
+                };
+
+                http.open("POST", "https://localhost:5050/game/create", true);
+                http.send(JSON.stringify(obj));
             }
+            
+            function join(sessionID) {
+                var socket = new WebSocket("ws://localhost:8080");
+
+                socket.onopen = function() {
+                    
+                    var obj = {
+                        "type": "join",
+                        "sessionID": sessionID
+                    }
+
+                    socket.send(JSON.stringify(obj));
+                }
+
+                socket.onmessage = function(message) {
+                    const obj = JSON.parse(message.data);
+                    const type = obj.type;
+                }
+            }
+            
 
         </script>
     </body>
 </html>
+
+
+
