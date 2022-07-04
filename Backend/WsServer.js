@@ -4,6 +4,17 @@ const http = require('http');
 const { join } = require('path');
 const WebSocket = require('ws');
 
+class User {
+  constructor(socket){
+      this.socket = socket
+      this.alive = true
+  }
+
+  kill(){
+      this.alive = false
+  }
+}
+
 class Session {
   constructor(sessionId, socketsCount){
       this.sessionId = sessionId
@@ -12,10 +23,19 @@ class Session {
   }
 
   AddUser(socket){
-      if(this.socketsCount >= this.sockets.length){
-          this.sockets.push(socket)
-      }
-  }
+    if(this.userCount >= this.users.length){
+        user = new User
+
+        this.users.push(socket)
+    }
+    else{
+        // nReturn lobby full
+    }
+}
+
+KillUser(socket){
+    var curUser = this.users.find((user) => user.socket == socket)
+}
 }
 
 class SessionList {
@@ -25,16 +45,26 @@ class SessionList {
 
   AddSocketToSession(ws, sessionId){
       var curSession = this.sessions.find((session) => session.sessionId == sessionId)
-      curSession.AddUser(ws)
-      console.log(this.sessions)
+      if(!curSession){
+        // Implement Error Response
+        console.log("Session does not exist");
+        return
+      }
+      else{
+        curSession.AddUser(ws)
+      }
   }
 
   AddSession(playerCount = 100){
-      let sessionid = '1'
-      //Implement ID System
-      let session = new Session(sessionid, playerCount)
-      this.sessions.push(session)
-      return sessionid
+    let sessionid = 'AAA'
+    //Check SessionID is unique
+    while(this.sessions.find((session) => session.sessionId == sessionId)){
+      sessionid = (Math.random() + 1).toString(36).substring(9)
+    }
+
+    let session = new Session(sessionid, playerCount)
+    this.sessions.push(session)
+    return sessionid
   }
 }
 
@@ -83,7 +113,7 @@ app.post("/game/create", urlencodedParser,  (request, response) => {
   const count = request.body.playerCount;
   //console.log(request.body);
   //const obj = JSON.parse(request.body);
-  var sesID = Sessions.AddSession();
+  var sesID = Sessions.AddSession(count);
   response.end(JSON.stringify({
     sessionID : sesID
   }))
