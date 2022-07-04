@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+    <head>
+
+    </head>
+    <body>
+        <script>
+            var socket = new WebSocket("ws://localhost:8080");
+
+            socket.onopen = function() {
+                socket.send("1234");
+            }
+
+            socket.onmessage = function(message) {
+                console.log(message.data);
+            }
+
+        </script>
+    </body>
+</html>
