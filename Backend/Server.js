@@ -7,6 +7,10 @@ var server = app.listen(Port, function() {
     console.log("Server running on port: " + Port);
 });
 
+app.get("/", function(request, response) {
+    response.send("<h1> Server is running on port: " + Port + "</h1>");
+});
+
 app.post("/game/create", function(request, response) {
     
 });
