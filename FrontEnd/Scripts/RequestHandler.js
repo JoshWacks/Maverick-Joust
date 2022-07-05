@@ -1,9 +1,17 @@
 var _sessionID;
 var _socket;
 
-function createGame(){
+function clickCreateGame() {
+    var count = document.getElementById("numPlayers").value;
+    createGame(count);
+}
 
-    var playerCount = document.getElementById("numPlayers").value;
+function createGame(playerCount){
+
+    alert("Creating");
+
+    //var playerCount = document.getElementById("numPlayers").value;
+
     var obj = {
         "playerCount": playerCount
     }
@@ -14,19 +22,24 @@ function createGame(){
         
         if (http.readyState == 4) {
             console.log(http.responseText);
-            SessionID = JSON.parse(http.responseText).sessionID;
-            join(JSON.parse(http.responseText).sessionID);
+            _sessionID = JSON.parse(http.responseText).sessionID;
+            joinGame(JSON.parse(http.responseText).sessionID);
         }
     };
 
-    http.open("POST", "http://localhost:5050/game/create", true);
+    http.open("POST", "http://localhost:5050/game/create", false);
     http.send(JSON.stringify(obj));
 
 }
 
-function joinGame(){
+function clickJoinGame() {
     var sessionID = document.getElementById("sessionID").value;
+    joinGame(sessionID);
+}
 
+function joinGame(sessionID){
+
+    alert("Joining");
     _socket = new WebSocket("ws://localhost:8080");
 
     _socket.onopen = function() {
