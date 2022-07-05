@@ -132,18 +132,16 @@ class SessionList {
 * Servers
 ============================================================= */
 
-/* WebSocket Server */
+/* Express Server */
 
-const { create } = require('domain');
-const fs = require('fs');
-const http = require('http');
-const { join } = require('path');
+const express = require('express');
 const WebSocket = require('ws');
 
-const server = http.createServer();
-const wss = new WebSocket.Server({ server });
+const app = express();
+const Port = process.env.PORT || 8080;
 
-var clients = new Map();
+const wss = new WebSocket.Server({ noServer: true });
+
 var Sessions = new SessionList();
 
 wss.on('connection', function connection(ws) {
@@ -170,24 +168,19 @@ wss.on('connection', function connection(ws) {
 
 });
 
-server.listen(process.env.PORT);
-console.log("Listening on 8080");
-
-
-/* Express Server */
-
-const express = require('express');
-const app = express();
-
-const expressPort = 5050;
+var server = app.listen(Port, function() {
+  console.log("Express WS Server Listening on Port " + Port);
+});
+server.on('upgrade', (request, socket, head) => {
+  wss.handleUpgrade(request, socket, head, socket => {
+    wss.emit('connection', socket, request);
+  });
+});
 
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false}));
 app.use(bodyParser.json());
 
-var httpServer = app.listen(expressPort, function() {
-  console.log("Express Server Listening on Port " + expressPort);
-});
 
 app.post("/game/create",  function(request, response) {
 
@@ -195,11 +188,31 @@ app.post("/game/create",  function(request, response) {
   var sesID = Sessions.AddSession(count);
 
   console.log(count);
+  console.log(sesID);
 
   response.end(JSON.stringify({
     "sessionID" : sesID
   }));
   
 });
+
+/* WebSocket Server */
+
+/*const { create } = require('domain');
+const fs = require('fs');
+const http = require('http');
+const { join } = require('path');
+
+
+const server = app.createServer();
+
+
+var clients = new Map();
+
+
+
+
+//server.listen(process.env.PORT);
+console.log("Listening on 8080");*/
 
 
