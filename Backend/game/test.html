@@ -36,22 +36,21 @@
 
             function create(playerCount) {
 
-                var obj = {
-                    "playerCount": playerCount
+                var data = "playerCount=5";
+
+                var xhr = new XMLHttpRequest();
+                //xhr.withCredentials = true;
+
+                xhr.addEventListener("readystatechange", function() {
+                if(this.readyState === 4) {
+                    console.log(this.responseText);
                 }
+                });
 
-                var http = new XMLHttpRequest();
+                xhr.open("POST", "http://localhost:5050/game/create");
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
-                http.onreadystatechange = function() {
-                    if (http.readyState == 4) {
-                        console.log(http.responseText);
-                        SessionID = JSON.parse(http.responseText).sessionID;
-                        join(JSON.parse(http.responseText).sessionID);
-                    }
-                };
-
-                http.open("POST", "http://localhost:5050/game/create", true);
-                http.send(JSON.stringify(obj));
+                xhr.send(data);
             }
             
             function join(sessionID) {

@@ -56,7 +56,7 @@ class Session {
 
   removeUser(socket) {
     this.KillUser(socket);
-    let curUser = this.users.((user) => user.socket == socket);
+    let curUser = this.users.find((user) => user.socket == socket);
     this.users.splice(0,1);
     
   }
@@ -181,18 +181,20 @@ const app = express();
 
 const expressPort = 5050;
 
-var bodyParser = require('body-parser');
-var jsonParser = bodyParser.json();
-var urlencodedParser = bodyParser.urlencoded({ extended: false });
+const bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: false}));
+app.use(bodyParser.json());
 
 var httpServer = app.listen(expressPort, function() {
   console.log("Express Server Listening on Port " + expressPort);
 });
 
-app.post("/game/create", urlencodedParser,  (request, response) => {
+app.post("/game/create",  function(request, response) {
 
   const count = request.body.playerCount;
   var sesID = Sessions.AddSession(count);
+
+  console.log(count);
 
   response.end(JSON.stringify({
     "sessionID" : sesID

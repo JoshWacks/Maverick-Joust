@@ -2,44 +2,46 @@ var _sessionID;
 var _socket;
 
 function clickCreateGame() {
-    var count = document.getElementById("numPlayers").value;
+    var count = document.getElementById("numPlayersCreate").value;
+    console.log(count);
     createGame(count);
 }
 
-function createGame(playerCount){
+function createGame(pCount){
 
-    alert("Creating");
+    //alert("Creating: " + pCount);
 
-    //var playerCount = document.getElementById("numPlayers").value;
+    var data = "playerCount="+pCount;
 
-    var obj = {
-        "playerCount": playerCount
+    var xhr = new XMLHttpRequest();
+    //xhr.withCredentials = true;
+
+    xhr.addEventListener("readystatechange", function() {
+    if(this.readyState === 4) {
+        console.log(this.responseText);
+        var obj = JSON.parse(this.responseText);
+        //alert(obj.sessionID);
+        _sessionID = obj.sessionID;
+        joinGame(obj.sessionID);
     }
+    });
 
-    var http = new XMLHttpRequest();
-    
-    http.onreadystatechange = function() {
-        
-        if (http.readyState == 4) {
-            console.log(http.responseText);
-            _sessionID = JSON.parse(http.responseText).sessionID;
-            joinGame(JSON.parse(http.responseText).sessionID);
-        }
-    };
+    xhr.open("POST", "http://localhost:5050/game/create", false);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
-    http.open("POST", "http://localhost:5050/game/create", false);
-    http.send(JSON.stringify(obj));
+    xhr.send(data);
 
 }
 
 function clickJoinGame() {
     var sessionID = document.getElementById("sessionID").value;
+    _sessionID = sessionID;
     joinGame(sessionID);
 }
 
 function joinGame(sessionID){
 
-    alert("Joining");
+    //alert("Joining");
     _socket = new WebSocket("ws://localhost:8080");
 
     _socket.onopen = function() {
