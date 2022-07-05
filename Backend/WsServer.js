@@ -54,6 +54,13 @@ class Session {
       }
   }
 
+  removeUser(socket) {
+    this.KillUser(socket);
+    let curUser = this.users.((user) => user.socket == socket);
+    this.users.splice(0,1);
+    
+  }
+
   reset() {
     for (let i=0; i<this.users.length; i++) {
       this.users[i].reset();
@@ -156,6 +163,10 @@ wss.on('connection', function connection(ws) {
     }
     
   });
+
+  ws.on("close", function close() {
+
+  })
 
 });
 
