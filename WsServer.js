@@ -170,7 +170,7 @@ wss.on('connection', function connection(ws) {
 
 });
 
-server.listen(process.env.PORT);
+server.listen(80);
 console.log("Listening on 8080");
 
 
@@ -181,7 +181,7 @@ const app = express();
 
 const path = require('path');
 
-const expressPort = 5050;
+const expressPort = 443;
 
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false}));
@@ -189,10 +189,6 @@ app.use(bodyParser.json());
 
 var httpServer = app.listen(expressPort, function() {
   console.log("Express Server Listening on Port " + expressPort);
-});
-
-app.get("/",  function(request, response) {
-  res.sendFile(path.join("./", 'index.html'));
 });
 
 app.post("/game/create",  function(request, response) {
