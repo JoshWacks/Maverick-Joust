@@ -144,6 +144,8 @@ const wss = new WebSocket.Server({ noServer: true });
 
 var Sessions = new SessionList();
 
+const path = require('path');
+
 wss.on('connection', function connection(ws) {
 
   ws.on('message', function incoming(message) {
@@ -194,6 +196,10 @@ app.post("/game/create",  function(request, response) {
     "sessionID" : sesID
   }));
   
+});
+
+app.get("/",  function(request, response) {
+  response.sendFile(path.join(__dirname, 'index.html'));
 });
 
 /* WebSocket Server */
