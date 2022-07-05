@@ -10,6 +10,10 @@ class User {
   kill(){
       this.alive = false
   }
+
+  reset() {
+    this.alive = true;
+  }
 }
 
 /*
@@ -21,22 +25,40 @@ class Session {
       this.sessionId = sessionId
       this.userCount = userCount
       this.users = []
+      this.activeUsers = 0;
   }
 
   AddUser(socket){
     if(this.userCount >= this.users.length){
         let user = new User(socket);
         this.users.push(user)
+        this.activeUsers++;
     }
     else{
-        // nReturn lobby full
+      socket.send(JSON.stringify({
+        "type" : "join",
+        "status" : "Failed: Lobby is Full!"
+      }));
     }
-}
+  }
 
-KillUser(socket){
-    var curUser = this.users.find((user) => user.socket == socket)
-    curUser.kill();
-}
+  KillUser(socket){
+      var curUser = this.users.find((user) => user.socket == socket)
+      curUser.kill();
+
+      if (--this.activeUsers == 1) {
+        var curUser = this.users.find((user) => user.alive == true)
+        curUser.socket.send(JSON.stringify({
+          "type" : "win"
+        }));
+      }
+  }
+
+  reset() {
+    for (let i=0; i<this.users.length; i++) {
+      this.users[i].reset();
+    }
+  }
 }
 
 /*
@@ -60,7 +82,7 @@ class SessionList {
       if(!curSession){
         // Implement Error Response
         console.log("Session does not exist");
-        return
+        return 
       }
       else{
         curSession.KillUser(ws);
@@ -71,7 +93,11 @@ class SessionList {
       var curSession = this.sessions.find((session) => session.sessionId == sessionId)
       if(!curSession){
         // Implement Error Response
-        console.log("Session does not exist");
+        ws.send(JSON.stringify({
+          "type" : "join",
+          "status" : "Failed: Session Does Not Exist!"
+        }));
+
         return
       }
       else{
@@ -79,7 +105,7 @@ class SessionList {
       }
   }
 
-  AddSession(playerCount = 100){
+  AddSession(playerCount = 5){
     let sessionid = 'AAA'
     //Check SessionID is unique
     while(this.sessions.find((session) => session.sessionId == sessionid)){
@@ -132,6 +158,7 @@ wss.on('connection', function connection(ws) {
   });
 
 });
+
 server.listen(8080);
 console.log("Listening on 8080");
 
@@ -154,11 +181,11 @@ var httpServer = app.listen(expressPort, function() {
 app.post("/game/create", urlencodedParser,  (request, response) => {
 
   const count = request.body.playerCount;
-
   var sesID = Sessions.AddSession(count);
+
   response.end(JSON.stringify({
-    sessionID : sesID
-  }))
+    "sessionID" : sesID
+  }));
   
 });
 

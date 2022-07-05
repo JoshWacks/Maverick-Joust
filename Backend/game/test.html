@@ -44,7 +44,7 @@
 
                 http.onreadystatechange = function() {
                     if (http.readyState == 4) {
-                        console.log(http);
+                        console.log(http.responseText);
                         SessionID = JSON.parse(http.responseText).sessionID;
                         join(JSON.parse(http.responseText).sessionID);
                     }
@@ -72,6 +72,7 @@
                 socket.onmessage = function(message) {
                     const obj = JSON.parse(message.data);
                     const type = obj.type;
+                    console.log(obj);
                 }
             }
             
