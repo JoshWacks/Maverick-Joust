@@ -179,6 +179,8 @@ console.log("Listening on 8080");
 const express = require('express');
 const app = express();
 
+const path = require('path');
+
 const expressPort = 5050;
 
 const bodyParser = require('body-parser');
@@ -187,6 +189,10 @@ app.use(bodyParser.json());
 
 var httpServer = app.listen(expressPort, function() {
   console.log("Express Server Listening on Port " + expressPort);
+});
+
+app.get("/",  function(request, response) {
+  res.sendFile(path.join("./", 'index.html'));
 });
 
 app.post("/game/create",  function(request, response) {
