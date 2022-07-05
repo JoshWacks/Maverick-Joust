@@ -26,7 +26,7 @@ function createGame(pCount){
     }
     });
 
-    xhr.open("POST", "http://localhost:5050/game/create", false);
+    xhr.open("POST", "http://192.168.46.35:5050/game/create", false);
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
     xhr.send(data);
@@ -60,4 +60,5 @@ function joinGame(sessionID){
         console.log(obj);
     }
 
+    localStorage.setItem("socket", _socket);
 }

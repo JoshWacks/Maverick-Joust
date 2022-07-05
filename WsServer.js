@@ -170,7 +170,7 @@ wss.on('connection', function connection(ws) {
 
 });
 
-server.listen(8080);
+server.listen(process.env.PORT);
 console.log("Listening on 8080");
 
 

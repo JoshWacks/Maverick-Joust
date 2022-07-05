@@ -3,6 +3,8 @@ var accNorm = 0
 var gyroNorm = 0
 var track
 
+var _socket = localStorage.getItem("socket");
+
 function dead()
 {
     document.body.style.background = 'red';
@@ -11,6 +13,11 @@ function dead()
     track.applyConstraints({advanced: [{torch: false}]});
     document.getElementById("header").innerText = "You lost";
     window.navigator.vibrate(750);
+
+    _socket.send(JSON.stringify({
+        "type": "lose",
+        "sessionID" : SessionID
+    }));
 }
 
 function requestPermissions()
