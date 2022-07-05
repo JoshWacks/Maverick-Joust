@@ -1,1 +1,3 @@
-.vscode
+/.vscode/settings.json
+localhost.key
+localhost.pem
