@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+    <head>
+
+    </head>
+    <body>
+
+        <div>
+            <input type="text" id="ses">
+            <button onclick="clickJoin()"> Join </button> <br><br>
+            <button onclick="clickCreate()"> Create </button>
+            <button onclick="clickKill()"> Kill Me </button>
+        </div>
+
+        <script>
+
+            var SessionID;
+            var socket;
+
+            function clickKill() {
+                socket.send(JSON.stringify({
+                    "type": "lose",
+                    "sessionID" : SessionID
+                }))
+            }
+
+            function clickJoin() {
+                var sessionID = document.getElementById("ses").value;
+                SessionID = sessionID;
+                join(sessionID);
+            }
+
+            function clickCreate() {
+                var count = window.prompt("Please enter player count");
+                create(count);
+            }
+
+            function create(playerCount) {
+
+                var obj = {
+                    "playerCount": playerCount
+                }
+
+                var http = new XMLHttpRequest();
+
+                http.onreadystatechange = function() {
+                    if (http.readyState == 4) {
+                        console.log(http.responseText);
+                        SessionID = JSON.parse(http.responseText).sessionID;
+                        join(JSON.parse(http.responseText).sessionID);
+                    }
+                };
+
+                http.open("POST", "http://localhost:5050/game/create", true);
+                http.send(JSON.stringify(obj));
+            }
+            
+            function join(sessionID) {
+                socket = new WebSocket("ws://localhost:8080");
+
+                socket.onopen = function() {
+                    
+                    var obj = {
+                        "type": "join",
+                        "sessionID": sessionID
+                    }
+
+                    socket.send(JSON.stringify(obj));
+                }
+
+
+
+                socket.onmessage = function(message) {
+                    const obj = JSON.parse(message.data);
+                    const type = obj.type;
+                    console.log(obj);
+                }
+            }
+            
+
+        </script>
+    </body>
+</html>
+
+
+
