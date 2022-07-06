@@ -1,15 +1,18 @@
 //Events
 //0: Only acc based on sensitivity
-//1: Acc on 1.5xSens, and 40 deg tilt
-var eventNum = 0
 
-var accNorm = 0
-var gyroNorm = 0
-var track
-var noIOS = true
-var gradient = ['#83ff00', '#a9b400', '#fefe33', '#ff0f00', '#d75c00']
+//1: Acc on 1.5xSens, and 40 deg tilt
+var eventNum = 0;
+
+var accNorm = 0;
+var gyroNorm = 0;
+var track;
+var noIOS = true;
+var gradient = ['#83ff00', '#a9b400', '#fefe33', '#ff0f00', '#d75c00'];
 var _socket = localStorage.getItem("socket");
-var sensitivity = 5
+var sensitivity = 5;
+
+var noSleep = new NoSleep();
 
 document.body.style.background = gradient[0];
 
@@ -86,6 +89,9 @@ function requestPermissions()
     else if (elem.webkitRequestFullscreen)
         elem.webkitRequestFullscreen();
     } 
+
+    //Prevent display sleep and enable wake lock in all Android and iOS web browsers.
+    noSleep.enable();
 
     //Take away request permission button
     document.getElementById("reqPerm").style.display="none";
